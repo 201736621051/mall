@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang='cn' xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>商品列表</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/bootstrap-responsive.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/style-metro.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/default.css}" rel="stylesheet" type="text/css" id="style_color"/>
+    <link th:href="@{/css/uniform.default.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/pagination.css}" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" th:href="@{/image/favicon.ico}"/>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .ZchartBox {
+            padding: 20px;
+            clear: both;
+        }
+
+        .ZchartBox .item {
+            width: 600px;
+            height: 400px;
+            float: left;
+            margin: 5px;
+            box-shadow: 0 0 18px -5px #ddd;
+        }
+
+        .ZchartBox .item canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <h3 class="page-title"><i class="fa fa-shopping-bag"></i> 报表统计</h3>
+    </div>
+    <div class="row-fluid">
+        <div class="portlet">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-reorder"></i>
+                    报表统计
+                </div>
+            </div>
+<!--            <div class="portlet-body">-->
+                <div class="ZchartBox">
+                    <div class="item">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery-1.10.1.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery-migrate-1.2.1.min.js}" type="text/javascript"></script>
+<!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+<script th:src="@{/js/jquery-ui-1.10.1.custom.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery.slimscroll.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery.blockui.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery.cookie.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery.uniform.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/app.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery.pagination.js}" type="text/javascript"></script>
+<script th:src="@{/js/zp-chart.js}" type="text/javascript"></script>
+<script th:inline="javascript" type="text/javascript">
+
+</script>
+<script>
+
+    var pagetotal;
+    $(function () {
+        $.ajax({
+            url: "getTotal.do",
+            type: "get",
+            success: function (result) {
+                if (result.state == 0) {
+                    pagetotal = result.data;
+                    var lineChartOption = {
+                        title:"近七天销售额报表",
+                        xAxis: {
+                            data: ['Day-6', 'Day-5', 'Day-4', 'Day-3', 'Day-2', 'Day-1', '今天']
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            name:'销售报表',
+                            data: [],
+                            type: 'line',//line or area
+                        }]
+                    };
+                    lineChartOption.series[0].data = result.data;
+                    //柱状图
+                    new barChart("barChart",lineChartOption);
+                } else {
+                    alert(result.message);
+                }
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>
